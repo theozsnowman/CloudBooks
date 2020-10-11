@@ -54,31 +54,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $_SESSION["type"] = $res_acctype;
                             //reset tries + log
                             setLoginTries(0, $res_id);
-                            insertLog($ip, "login", "PASSWORD ACCEPTED FOR USER '" . $res_user . "'");
+                            insertLog($ip, "login", "PASSWORD ACCEPTED FOR USER " . $res_user);
                             //check if 2fa is enabled
                             if ($res_2fa == true) {
                                 $_SESSION["2fa"] = "tocheck";
-                                header("location: 2fa/");
+                                header("location: ".$INSTALL_LINK."2fa/");
                             } else {
                                 $_SESSION["2fa"] = "notneeded";
-                                header("location: dashboard/");
+                                header("location: ".$INSTALL_LINK."dashboard/");
                             }
                         } else {
                             $err = loginError("Utente sconosciuto!");
-                            insertLog($ip, "login", "DENIED FOR LOCKED USER '" . $res_user . "'");
+                            insertLog($ip, "login", "DENIED FOR LOCKED USER " . $res_user);
                         }
                     } else {
                         $err = loginError("Utente sconosciuto!");
                         //increment login tries
-                        setLoginTries($logintries + 1, $res_Id);
-                        insertLog($ip, "login", "DENIED FOR USER '" . $res_user . "'");
+                        setLoginTries($logintries + 1, $res_id);
+                        insertLog($ip, "login", "DENIED FOR USER " . $res_user);
                     }
                 } else {
                     $err = loginError();
                 }
             } else {
                 $err = loginError("Utente sconosciuto!");
-                insertLog($ip, "login", "DENIED FOR UNKNOWN USER '" . $param_username . "'");
+                insertLog($ip, "login", "DENIED FOR UNKNOWN USER " . $param_username);
             }
         } else {
             $err = loginError();
@@ -97,15 +97,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>CloudBooks - Login</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <meta name="theme-color" content="#563d7c">
-    <link rel="shortcut icon" href="res/img/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="res/img/favicon.ico" type="image/x-icon">
-    <link href="res/css/login.css" rel="stylesheet">
+    <link rel="shortcut icon" href="<?php echo $INSTALL_LINK;?>res/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="<?php echo $INSTALL_LINK;?>res/img/favicon.ico" type="image/x-icon">
+    <link href="<?php echo $INSTALL_LINK;?>res/css/login.css" rel="stylesheet">
 </head>
 
 <body>
     <form class="form-signin" action="" method="post">
         <div class="text-center mb-4">
-            <img class="mb-4" src="res/img/logo.png" width="391" height="279" style="margin: 0px !important">
+            <img class="mb-4" src="<?php echo $INSTALL_LINK;?>res/img/logo.png" width="391" height="279" style="margin: 0px !important">
         </div>
         <div class="form-label-group">
             <input type="text" name="user" id="inputUsername" class="form-control" placeholder="Nome Utente" required autofocus>
