@@ -1,8 +1,16 @@
 <?php
-if(!file_exists("../config.php")){
+if (!file_exists("../config.php")) {
   die("Please run installer in /installer directory");
 }
 session_start();
+
+if (!isset($_SESSION["loggedin"]) | $_SESSION["loggedin"] != true) {
+  header("location: ../");
+}
+
+if ($_SESSION["2fa"] == "tocheck") {
+  header("location: 2fa/");
+}
 ?>
 
 <!doctype html>
@@ -160,7 +168,7 @@ session_start();
       <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
 
       </main>
-    
+
     </div>
   </div>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>

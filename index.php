@@ -1,5 +1,5 @@
 <?php
-if(!file_exists("config.php")){
+if (!file_exists("config.php")) {
     die("Please run installer in /installer directory");
 }
 session_start();
@@ -45,15 +45,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt->bind_result($res_id, $res_user, $res_pass, $res_2fa, $res_acctype, $logintries);
                 if ($stmt->fetch()) {
                     if (password_verify($password, $res_pass)) {
-                        if($logintries <= "5"){
+                        if ($logintries <= "5") {
                             //password is ok
                             session_start();
                             $_SESSION["loggedin"] = true;
                             $_SESSION["id"] = $res_id;
                             $_SESSION["username"] = $username;
                             $_SESSION["type"] = $res_acctype;
-                            //reset tries
-                            $SQLINK->query("UPDATE `users` SET `logintries` = '0' WHERE `id` = $res_id");
+                            //reset tries + log
+                            setLoginTries(0, $res_id);
+                            insertLog($ip, "login", "PASSWORD ACCEPTED FOR USER '" . $res_user . "'");
                             //check if 2fa is enabled
                             if ($res_2fa == true) {
                                 $_SESSION["2fa"] = "tocheck";
@@ -62,28 +63,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 $_SESSION["2fa"] = "notneeded";
                                 header("location: dashboard/");
                             }
-                        }else{
+                        } else {
                             $err = loginError("Utente sconosciuto!");
+                            insertLog($ip, "login", "DENIED FOR LOCKED USER '" . $res_user . "'");
                         }
                     } else {
-                        $err = $err = $err = loginError("Utente sconosciuto!");
+                        $err = loginError("Utente sconosciuto!");
                         //increment login tries
-                        $actualtries = $logintries + 1;
-                        $SQLINK->query("UPDATE `users` SET `logintries` = '$actualtries' WHERE `id` = $res_id");
+                        setLoginTries($logintries + 1, $res_Id);
+                        insertLog($ip, "login", "DENIED FOR USER '" . $res_user . "'");
                     }
                 } else {
                     $err = loginError();
                 }
             } else {
                 $err = loginError("Utente sconosciuto!");
+                insertLog($ip, "login", "DENIED FOR UNKNOWN USER '" . $param_username . "'");
             }
         } else {
             $err = loginError();
         }
         $stmt->close();
-    } else {
-        $SQLINK->close();
     }
+    $SQLINK->close();
 }
 ?>
 <!doctype html>
@@ -105,14 +107,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
         <div class="form-label-group">
             <input type="text" name="user" id="inputUsername" class="form-control" placeholder="Nome Utente" required autofocus>
-            <label for="inputUsername">Nome Utente</label>
+            <label for="inputUsername">
+            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-person" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M10 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6 5c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+            </svg>
+            Nome Utente
+            </label>
         </div>
         <div class="form-label-group">
             <input type="password" name="pass" id="inputPassword" class="form-control" placeholder="Password" required>
-            <label for="inputPassword">Password</label>
+            <label for="inputPassword">
+                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-key" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11 9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4 4 0 0 1 0 8zm4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5z"/>
+                    <path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                </svg>
+            Password
+            </label>
         </div>
         <?php echo $err; ?>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Accedi</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">
+        Accedi
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-bar-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M6 8a.5.5 0 0 0 .5.5h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L12.293 7.5H6.5A.5.5 0 0 0 6 8zm-2.5 7a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5z"/>
+        </svg>
+        </button>
         <p class="mt-5 mb-3 text-muted text-center">Gestionale CloudBooks - &copy; <?php echo date("Y"); ?> Vittorio Lo Mele</p>
     </form>
 </body>
