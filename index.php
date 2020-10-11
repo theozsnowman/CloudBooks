@@ -6,9 +6,10 @@ session_start();
 
 //check if user is logged in
 if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
-    if ($_SESSION["2fa"] == "notneeded" | $_SESSION["2fa"] == "ok")
+    if ($_SESSION["2fa"] == "notneeded" | $_SESSION["2fa"] == "ok"){
         header("location: dashboard/");
-    exit;
+        exit;
+    }
 }
 
 //import config
@@ -47,7 +48,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     if (password_verify($password, $res_pass)) {
                         if ($logintries <= "5") {
                             //password is ok
-                            session_start();
                             $_SESSION["loggedin"] = true;
                             $_SESSION["id"] = $res_id;
                             $_SESSION["username"] = $username;
@@ -97,6 +97,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>CloudBooks - Login</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <meta name="theme-color" content="#563d7c">
+    <link rel="shortcut icon" href="res/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="res/img/favicon.ico" type="image/x-icon">
     <link href="res/css/login.css" rel="stylesheet">
 </head>
 

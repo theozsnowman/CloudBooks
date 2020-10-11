@@ -20,10 +20,10 @@ if ($_SESSION["2fa"] == "tocheck") {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>CloudBooks - Dashboard</title>
-  <!-- Bootstrap core CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <link rel="shortcut icon" href="res/img/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="res/img/favicon.ico" type="image/x-icon">
   <meta name="theme-color" content="#563d7c">
-  <!-- Custom styles for this template -->
   <link href="../res/css/basestyle.css" rel="stylesheet">
 </head>
 
@@ -36,7 +36,7 @@ if ($_SESSION["2fa"] == "tocheck") {
     <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> -->
     <ul class="navbar-nav px-3">
       <li class="nav-item text-nowrap">
-        <a class="nav-link" href="#">Esci <span data-feather="log-out"></span></a>
+        <a class="nav-link" href="../logout.php">Esci <span data-feather="log-out"></span></a>
       </li>
     </ul>
   </nav>
