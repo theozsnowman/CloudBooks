@@ -16,6 +16,7 @@ if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
 
 function insertLog($ip, $calledfrom, $action)
 {
+    global $SQLINK;
     $SQLINK->query("INSERT INTO `logs` (`timestamp`, `ipaddr`, `calledfrom`, `action`) VALUES (current_timestamp(), '$ip', '$calledfrom', '$action')");
 }
 
@@ -26,5 +27,6 @@ function loginError($error = "Errore interno!")
 
 function setLoginTries($tries, $id)
 {
+    global $SQLINK;
     $SQLINK->query("UPDATE `users` SET `logintries` = '$tries' WHERE `id` = $id");
 }
