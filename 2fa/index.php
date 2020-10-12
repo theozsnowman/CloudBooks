@@ -4,7 +4,8 @@ if (!file_exists("../config.php")) {
     die("Please run installer in /installer directory");
 }
 require_once "../config.php"; 
-require "../../res/libs/PHPGangsta/GoogleAuthenticator.php";
+require_once "../functions.php"; 
+require "../res/libs/PHPGangsta/GoogleAuthenticator.php";
 $gauth = new PHPGangsta_GoogleAuthenticator;
 if (!isset($_SESSION["loggedin"]) | $_SESSION["loggedin"] != true) {
     header("location: ".$INSTALL_LINK);
@@ -13,6 +14,36 @@ if (!isset($_SESSION["loggedin"]) | $_SESSION["loggedin"] != true) {
 if ($_SESSION["2fa"] == "notneeded" | $_SESSION["2fa"] == "ok"){
     header("location: ".$INSTALL_LINK."dashboard/");
     exit;
+}
+$err = "";
+
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+    $sessuser = $SQLINK->real_escape_string($_SESSION["username"]);
+    $accid = $SQLINK->real_escape_string($_SESSION["id"]);
+    $tfastatus = $SQLINK->query("SELECT `2fasecret`, `logintries` FROM `users` WHERE `id` = '$accid'", MYSQLI_STORE_RESULT);
+    $tfastatus_res = $tfastatus->fetch_array();
+    $secretcode = $tfastatus_res["2fasecret"];
+    $logintries = $tfastatus_res["logintries"];
+    if($logintries <= "5"){
+        if($gauth->verifyCode($secretcode, trim($_POST["otp"]))){
+            $_SESSION["2fa"] = "ok";
+            insertLog($ip, "2fa", "ACCEPTED FOR USER $sessuser");
+            setLoginTries(0, $accid);
+            header("location: ".$INSTALL_LINK."dashboard");
+            exit;
+        }else{
+            $err = loginError("Impossibile verificare codice.");
+            //increment login tries
+            setLoginTries($logintries + 1, $accid);
+            insertLog($ip, "2fa", "DENIED FOR USER " . $sessuser);
+        }
+    }else{
+        //disable account
+        $_SESSION = array();
+        session_destroy();
+        header("location: /");
+        exit;
+    }
 }
 ?>
 <!doctype html>
@@ -44,7 +75,7 @@ if ($_SESSION["2fa"] == "notneeded" | $_SESSION["2fa"] == "ok"){
             Codice di verifica
             </label>
         </div>
-        <?php //echo $err; ?>
+        <?php echo $err; ?>
         <button class="btn btn-lg btn-primary btn-block" type="submit">
         Verifica
         <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check2-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

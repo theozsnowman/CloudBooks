@@ -14,18 +14,27 @@ if (!isset($_SESSION["loggedin"]) | $_SESSION["loggedin"] != true) {
 if ($_SESSION["2fa"] == "tocheck") {
     header("location: " . $INSTALL_LINK . "2fa/");
 }
-$err = "none";
-
+$err = "null";
+//get 2fa status from DB
+$gauth = new PHPGangsta_GoogleAuthenticator;
 $accid = $SQLINK->escape_string($_SESSION["id"]);
 $tfastatus = $SQLINK->query("SELECT `2fa`, `2fasecret` FROM `users` WHERE `id` = '$accid'", MYSQLI_STORE_RESULT);
 $tfastatus_res = $tfastatus->fetch_array();
 if ($tfastatus_res["2fa"] == "0") {
     //generating a fresh secret code
-    $gauth = new PHPGangsta_GoogleAuthenticator;
     $secretcode = $gauth->createSecret();
     $imgsrc = $gauth->getQRCodeGoogleUrl("CloudBooks " . $CNAME, $secretcode);
+    //insert in db pending state
+    $pre = "UPDATE `users` SET `2fa` = 1, `2fasecret` = ? WHERE `id` = ?";
+    $create_stmt = $SQLINK->prepare($pre);
+    $create_stmt->bind_param("si", $par_secret_new, $par_id_new);
+    $par_secret_new = $SQLINK->real_escape_string($secretcode);
+    $par_id_new = $accid;
+    $create_stmt->execute();
 } else {
+    //if there is code store it
     $secretcode = $tfastatus_res["2fasecret"];
+    $imgsrc = $gauth->getQRCodeGoogleUrl("CloudBooks " . $CNAME, $secretcode);
 }
 $tfa_final_state = $tfastatus_res["2fa"];
 
@@ -34,15 +43,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["mode"]) && isset($_POS
         case "enable":
             //check code
             if ($gauth->verifyCode($secretcode, $_POST["otp"])) {
-                //code is correct, store into database
-                $pre = "UPDATE `users` SET `2fa` = 1,`2fasecret` = ? WHERE `id` = ?";
+                //code is correct, store into database the new state
+                $pre = "UPDATE `users` SET `2fa` = 2 WHERE `id` = ?";
                 $insert_stmt = $SQLINK->prepare($pre);
-                $stmt->bind_param("si", $par_secret, $par_id);
-                $par_secret = $SQLINK->real_escape_string($_POST["otp"]);
+                $insert_stmt->bind_param("i", $par_id);
                 $par_id = $accid;
-                $stmt->execute();
-                $tfa_final_state = "1";
-                if ($stmt->affected_rows != 1) {
+                $insert_stmt->execute();
+                $tfa_final_state = "2";
+                if ($insert_stmt->affected_rows != 1) {
                     $err = "Errore interno!";
                 }
             } else {
@@ -52,13 +60,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["mode"]) && isset($_POS
             break;
         case "disable":
             if ($gauth->verifyCode($secretcode, $_POST["otp"])) {
-                //code is correct, store into database
-                $pre = "UPDATE `users` SET `2fa` = 0,`2fasecret` = 'NULL' WHERE `id` = $accid";
-                $res = $SQLINK->query($pre);
-                if ($SQLINK->affected_rows != 1) {
-                    $err = "Errore interno!";
-                }
-                $tfa_final_state = "0";
+                //code is correct, clear db and generate fresh code
+                $secretcode = $gauth->createSecret();
+                $imgsrc = $gauth->getQRCodeGoogleUrl("CloudBooks " . $CNAME, $secretcode);
+                //insert in db pending state
+                $pre = "UPDATE `users` SET `2fa` = 1, `2fasecret` = ? WHERE `id` = ?";
+                $update_stmt = $SQLINK->prepare($pre);
+                $update_stmt->bind_param("si", $par_secret_ud, $par_id_ud);
+                $par_secret_ud = $SQLINK->real_escape_string($secretcode);
+                $par_id_ud = $accid;
+                $update_stmt->execute();
+                $tfa_final_state = "1";
             } else {
                 //code is not correct, print err
                 $err = "Impossibile verificare il codice.";
@@ -200,7 +212,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["mode"]) && isset($_POS
                     <h1 class="h2">Autenticazione a due fattori</h1>
                 </div>
                 <?php
-                if ($tfa_final_state == "0") {
+                if ($tfa_final_state != "2") {
                     displayEnable2faForm($imgsrc, $err);
                 } else {
                     displayDisable2faForm($err);
