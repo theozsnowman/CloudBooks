@@ -1,9 +1,11 @@
 <?php
+session_start();
 if (!file_exists("../config.php")) {
     die("Please run installer in /installer directory");
 }
 require_once "../config.php"; 
-session_start();
+require "../../res/libs/PHPGangsta/GoogleAuthenticator.php";
+$gauth = new PHPGangsta_GoogleAuthenticator;
 if (!isset($_SESSION["loggedin"]) | $_SESSION["loggedin"] != true) {
     header("location: ".$INSTALL_LINK);
     exit;

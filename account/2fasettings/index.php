@@ -5,6 +5,7 @@ if (!file_exists("../../config.php")) {
 session_start();
 require_once "../../config.php";
 require_once "../../functions.php";
+require "../../res/libs/PHPGangsta/GoogleAuthenticator.php";
 
 if (!isset($_SESSION["loggedin"]) | $_SESSION["loggedin"] != true) {
     header("location: " . $INSTALL_LINK);
@@ -13,6 +14,61 @@ if (!isset($_SESSION["loggedin"]) | $_SESSION["loggedin"] != true) {
 if ($_SESSION["2fa"] == "tocheck") {
     header("location: " . $INSTALL_LINK . "2fa/");
 }
+$err = "none";
+
+$accid = $SQLINK->escape_string($_SESSION["id"]);
+$tfastatus = $SQLINK->query("SELECT `2fa`, `2fasecret` FROM `users` WHERE `id` = '$accid'", MYSQLI_STORE_RESULT);
+$tfastatus_res = $tfastatus->fetch_array();
+if ($tfastatus_res["2fa"] == "0") {
+    //generating a fresh secret code
+    $gauth = new PHPGangsta_GoogleAuthenticator;
+    $secretcode = $gauth->createSecret();
+    $imgsrc = $gauth->getQRCodeGoogleUrl("CloudBooks " . $CNAME, $secretcode);
+} else {
+    $secretcode = $tfastatus_res["2fasecret"];
+}
+$tfa_final_state = $tfastatus_res["2fa"];
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["mode"]) && isset($_POST["otp"])) {
+    switch ($_POST["mode"]) {
+        case "enable":
+            //check code
+            if ($gauth->verifyCode($secretcode, $_POST["otp"])) {
+                //code is correct, store into database
+                $pre = "UPDATE `users` SET `2fa` = 1,`2fasecret` = ? WHERE `id` = ?";
+                $insert_stmt = $SQLINK->prepare($pre);
+                $stmt->bind_param("si", $par_secret, $par_id);
+                $par_secret = $SQLINK->real_escape_string($_POST["otp"]);
+                $par_id = $accid;
+                $stmt->execute();
+                $tfa_final_state = "1";
+                if ($stmt->affected_rows != 1) {
+                    $err = "Errore interno!";
+                }
+            } else {
+                //code is not correct, print err
+                $err = "Impossibile verificare il codice.";
+            }
+            break;
+        case "disable":
+            if ($gauth->verifyCode($secretcode, $_POST["otp"])) {
+                //code is correct, store into database
+                $pre = "UPDATE `users` SET `2fa` = 0,`2fasecret` = 'NULL' WHERE `id` = $accid";
+                $res = $SQLINK->query($pre);
+                if ($SQLINK->affected_rows != 1) {
+                    $err = "Errore interno!";
+                }
+                $tfa_final_state = "0";
+            } else {
+                //code is not correct, print err
+                $err = "Impossibile verificare il codice.";
+            }
+            break;
+        default:
+            $err = "Errore interno!";
+    }
+}
+
 ?>
 
 <!doctype html>
@@ -27,6 +83,8 @@ if ($_SESSION["2fa"] == "tocheck") {
     <link rel="icon" href="<?php echo $INSTALL_LINK; ?>res/img/favicon.ico" type="image/x-icon">
     <meta name="theme-color" content="#563d7c">
     <link href="<?php echo $INSTALL_LINK; ?>res/css/basestyle.css" rel="stylesheet">
+    <link href="<?php echo $INSTALL_LINK; ?>res/css/2fasettings.css" rel="stylesheet">
+
 </head>
 
 <body>
@@ -38,7 +96,7 @@ if ($_SESSION["2fa"] == "tocheck") {
         <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> -->
         <ul class="navbar-nav px-3">
             <li class="nav-item text-nowrap">
-                <a class="nav-link" href="<?php echo $INSTALL_LINK; ?>logout.php"><span data-feather="user"></span> <?php echo $_SESSION["username"]; ?>   -   Esci <span data-feather="log-out"></span></a>
+                <a class="nav-link" href="<?php echo $INSTALL_LINK; ?>logout.php"><span data-feather="user"></span> <?php echo $_SESSION["username"]; ?> - Esci <span data-feather="log-out"></span></a>
             </li>
         </ul>
     </nav>
@@ -131,7 +189,8 @@ if ($_SESSION["2fa"] == "tocheck") {
                     <?php
                     //if admin display admin controls
                     if ($_SESSION["type"] == "1") {
-                        displayAdminControls();}?>
+                        displayAdminControls();
+                    } ?>
 
                 </div>
             </nav>
@@ -140,8 +199,13 @@ if ($_SESSION["2fa"] == "tocheck") {
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Autenticazione a due fattori</h1>
                 </div>
-                
-                <a><span data-feather="user"></span> Account Utente: <?php echo $_SESSION["username"]; ?></a>
+                <?php
+                if ($tfa_final_state == "0") {
+                    displayEnable2faForm($imgsrc, $err);
+                } else {
+                    displayDisable2faForm($err);
+                }
+                ?>
             </main>
 
         </div>

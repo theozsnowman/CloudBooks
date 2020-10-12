@@ -58,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             setLoginTries(0, $res_id);
                             insertLog($ip, "login", "PASSWORD ACCEPTED FOR USER " . $res_user);
                             //check if 2fa is enabled
-                            if ($res_2fa == true) {
+                            if ($res_2fa == "2") {
                                 $_SESSION["2fa"] = "tocheck";
                                 header("location: ".$INSTALL_LINK."2fa/");
                             } else {
