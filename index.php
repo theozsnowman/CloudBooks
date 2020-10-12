@@ -7,8 +7,10 @@ session_start();
 //check if user is logged in
 if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
     if ($_SESSION["2fa"] == "notneeded" | $_SESSION["2fa"] == "ok"){
-        header("location: dashboard/");
+        header("location: ".$INSTALL_LINK."dashboard/");
         exit;
+    }else{
+        header("location: ".$INSTALL_LINK."2fa/");
     }
 }
 
@@ -133,7 +135,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <path fill-rule="evenodd" d="M6 8a.5.5 0 0 0 .5.5h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L12.293 7.5H6.5A.5.5 0 0 0 6 8zm-2.5 7a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5z"/>
         </svg>
         </button>
-        <p class="mt-5 mb-3 text-muted text-center">Gestionale CloudBooks - &copy; <?php echo date("Y"); ?> Vittorio Lo Mele</p>
+        <p class="mt-5 mb-3 text-muted text-center">Struttura attiva: <?php echo $CNAME; ?><br>
+        Gestionale CloudBooks - &copy; <?php echo date("Y"); ?> Vittorio Lo Mele</p>
     </form>
 </body>
 

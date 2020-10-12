@@ -4,13 +4,16 @@ if (!file_exists("../config.php")) {
 }
 session_start();
 require_once "../config.php";
+require_once "../functions.php";
 
 if (!isset($_SESSION["loggedin"]) | $_SESSION["loggedin"] != true) {
   header("location: ".$INSTALL_LINK);
+  exit;
 }
 
 if ($_SESSION["2fa"] == "tocheck") {
   header("location: ".$INSTALL_LINK."2fa/");
+  exit;
 }
 ?>
 
@@ -37,7 +40,7 @@ if ($_SESSION["2fa"] == "tocheck") {
     <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> -->
     <ul class="navbar-nav px-3">
       <li class="nav-item text-nowrap">
-        <a class="nav-link" href="<?php echo $INSTALL_LINK;?>logout.php">Esci <span data-feather="log-out"></span></a>
+        <a class="nav-link" href="<?php echo $INSTALL_LINK; ?>logout.php"><span data-feather="user"></span> <?php echo $_SESSION["username"]; ?>   -   Esci <span data-feather="log-out"></span></a>
       </li>
     </ul>
   </nav>
