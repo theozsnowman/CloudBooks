@@ -133,42 +133,7 @@ if ($_SESSION["2fa"] == "tocheck") {
           <?php 
           //if admin display admin controls
           if($_SESSION["type"] == "1"){
-          echo sprintf('
-          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-            <span>Amministrazione</span>
-          </h6>
-          <ul class="nav flex-column mb-2">
-            <li class="nav-item">
-              <a class="nav-link" href="%sbackup/">
-                <span data-feather="database"></span>
-                Importa/Esporta Backup
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="%susers/">
-                <span data-feather="users"></span>
-                Gestione Utenti
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="%sselftest/">
-                <span data-feather="check"></span>
-                Self-Test
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="%slogs/">
-                <span data-feather="file-text"></span>
-                Ispezione log
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="%ssettings/">
-                <span data-feather="settings"></span>
-                Impostazioni Software
-              </a>
-            </li>
-          </ul>', $INSTALL_LINK, $INSTALL_LINK, $INSTALL_LINK, $INSTALL_LINK, $INSTALL_LINK);}
+          displayAdminControls();}
           ?>
 
         </div>
