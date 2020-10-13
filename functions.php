@@ -80,3 +80,12 @@ function displayDisable2faForm($err = "none"){
     
 }
 
+function displayOTPField()
+{
+    global $INSTALL_LINK;
+    $templatefile = fopen(__DIR__."/res/htmltemplates/otpfield.html", "r");
+    $template = fread($templatefile, filesize(__DIR__."/res/htmltemplates/otpfield.html"));
+    fclose($templatefile);
+    echo $template;
+}
+

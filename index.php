@@ -39,7 +39,7 @@ $username = $password = $err = "";
 
 //process form data
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (empty(trim($_POST["user"])) | strlen(trim($_POST["user"])) > 25) {
+    if (empty(trim($_POST["user"])) | strlen(trim($_POST["user"])) > 25 | strlen(trim($_POST["pass"])) < 4) {
         //username error
         $err = "Username non valido";
     } else {
@@ -47,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $username = $SQLINK->real_escape_string(trim($_POST["user"]));
     }
 
-    if (empty(trim($_POST["pass"])) | strlen(trim($_POST["pass"])) > 72) {
+    if (empty(trim($_POST["pass"])) | strlen(trim($_POST["pass"])) > 72 | strlen(trim($_POST["pass"])) < 6) {
         //password error
         $err = "Password non valida";
     } else {
