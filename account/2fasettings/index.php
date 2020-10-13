@@ -32,7 +32,7 @@ if (!isset($_SESSION["loggedin"]) | $_SESSION["loggedin"] != true) {
 if ($_SESSION["2fa"] == "tocheck") {
     header("location: " . $INSTALL_LINK . "2fa/");
 }
-$err = "none";
+$err = "";
 //get 2fa status from DB
 $gauth = new PHPGangsta_GoogleAuthenticator;
 $accid = $SQLINK->escape_string($_SESSION["id"]);
@@ -69,11 +69,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["mode"]) && isset($_POS
                 $insert_stmt->execute();
                 $tfa_final_state = "2";
                 if ($insert_stmt->affected_rows != 1) {
-                    $err = "Errore interno!";
+                    $err = "Errore interno! Riprova...";
                 }
             } else {
                 //code is not correct, print err
-                $err = "Impossibile verificare il codice.";
+                $err = "Impossibile verificare il codice. Riprova...";
             }
             break;
         case "disable":
@@ -91,11 +91,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["mode"]) && isset($_POS
                 $tfa_final_state = "1";
             } else {
                 //code is not correct, print err
-                $err = "Impossibile verificare il codice.";
+                $err = "Impossibile verificare il codice. Riprova...";
             }
             break;
         default:
-            $err = "Errore interno!";
+            $err = "Errore interno! Riprova...";
     }
 }
 
@@ -246,6 +246,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["mode"]) && isset($_POS
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
     <script src="<?php echo $INSTALL_LINK; ?>res/js/dashboard.js"></script>
+    <script>
+        //'show err' script
+        var error = "<?php echo $err ?>";
+        document.addEventListener('DOMContentLoaded', (event) => {
+            if (error != "") {
+                setTimeout(() => { alert(error); }, 50);
+            }
+        });
+    </script>
 </body>
 
 </html>
