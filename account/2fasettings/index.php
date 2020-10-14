@@ -231,7 +231,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["mode"]) && isset($_POS
                 </div>
                 <?php
                 if ($tfa_final_state != "2") {
-                    var_dump($err);
                     displayEnable2faForm($imgsrc, $err);
                 } else {
                     displayDisable2faForm($err);
