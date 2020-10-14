@@ -18,10 +18,10 @@
     Contact me at: vittorio[at]mrbackslash.it
 */
 $DB_ADDR = "127.0.0.1";
-$DB_USER = "test";
-$DB_PASS = "test";
-$DB_NAME = "test";
+$DB_USER = "root";
+$DB_PASS = "";
+$DB_NAME = "cloudbooks";
 $CNAME = "MRBACKSLASH HQ";
-$INSTALL_LINK = "http://localhost/";
+$INSTALL_LINK = "http://localhost/cloudbooks/";
 
 $SQLINK = mysqli_connect($DB_ADDR, $DB_USER, $DB_PASS, $DB_NAME);
