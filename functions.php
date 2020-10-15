@@ -18,6 +18,11 @@
     Contact me at: vittorio[at]mrbackslash.it
 */
 require_once "config.php";
+define("AM_BACKUP", "1");
+define("AM_USERS", "2");
+define("AM_TEST", "3");
+define("AM_LOG", "4");
+define("AM_SETTINGS", "5");
 
 //obtain ip address
 if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
@@ -50,47 +55,66 @@ function setLoginTries($tries, $id)
     $SQLINK->query("UPDATE `users` SET `logintries` = '$tries' WHERE `id` = $id");
 }
 
-function displayAdminControls()
+function displayAdminControls($active = "")
 {
+    $a1 = "active";
+    $a2 = '<span class="sr-only">(current)</span>';
     global $INSTALL_LINK;
-    $templatefile = fopen(__DIR__."/res/htmltemplates/admincontrols.html", "r");
-    $template = fread($templatefile, filesize(__DIR__."/res/htmltemplates/admincontrols.html"));
+    $templatefile = fopen(__DIR__ . "/res/htmltemplates/admincontrols.html", "r");
+    $template = fread($templatefile, filesize(__DIR__ . "/res/htmltemplates/admincontrols.html"));
     fclose($templatefile);
-    echo sprintf($template, $INSTALL_LINK, $INSTALL_LINK, $INSTALL_LINK, $INSTALL_LINK, $INSTALL_LINK);
+    switch ($active) {
+        case "1":
+            echo sprintf($template, $a1, $INSTALL_LINK, $a2,   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "");
+            break;
+        case "2":
+            echo sprintf($template, "", $INSTALL_LINK, "",   $a1, $INSTALL_LINK, $a2,   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "");
+            break;
+        case "3":
+            echo sprintf($template, "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   $a1, $INSTALL_LINK, $a2,   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "");
+            break;
+        case "4":
+            echo sprintf($template, "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   $a1, $INSTALL_LINK, $a2,   "", $INSTALL_LINK, "");
+            break;
+        case "5":
+            echo sprintf($template, "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   $a1, $INSTALL_LINK, $a2);
+            break;
+        default:
+            echo sprintf($template, "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "");
+    }
 }
 
-function displayEnable2faForm($src, $err = "none"){
-    $templatefile = fopen(__DIR__."/res/htmltemplates/2faenable.html", "r");
-    $template = fread($templatefile, filesize(__DIR__."/res/htmltemplates/2faenable.html"));
+function displayEnable2faForm($src, $err = "none")
+{
+    $templatefile = fopen(__DIR__ . "/res/htmltemplates/2faenable.html", "r");
+    $template = fread($templatefile, filesize(__DIR__ . "/res/htmltemplates/2faenable.html"));
     fclose($templatefile);
-    if($err = "none"){
+    if ($err = "none") {
         $err_ok = "";
-    }else{
+    } else {
         $err_ok = "<div class='alert alert-danger' role='alert'>" . $err . "</div>";
     }
     echo sprintf($template, $src, $err_ok, date("Y"));
-    
 }
 
-function displayDisable2faForm($err = "none"){
-    $templatefile = fopen(__DIR__."/res/htmltemplates/2fadisable.html", "r");
-    $template = fread($templatefile, filesize(__DIR__."/res/htmltemplates/2fadisable.html"));
+function displayDisable2faForm($err = "none")
+{
+    $templatefile = fopen(__DIR__ . "/res/htmltemplates/2fadisable.html", "r");
+    $template = fread($templatefile, filesize(__DIR__ . "/res/htmltemplates/2fadisable.html"));
     fclose($templatefile);
-    if($err = "none"){
+    if ($err = "none") {
         $err_ok = "";
-    }else{
+    } else {
         $err_ok = "<div class='alert alert-danger' role='alert'>" . $err . "</div>";
     }
     echo sprintf($template, $err_ok, date("Y"));
-    
 }
 
 function displayOTPField()
 {
     global $INSTALL_LINK;
-    $templatefile = fopen(__DIR__."/res/htmltemplates/otpfield.html", "r");
-    $template = fread($templatefile, filesize(__DIR__."/res/htmltemplates/otpfield.html"));
+    $templatefile = fopen(__DIR__ . "/res/htmltemplates/otpfield.html", "r");
+    $template = fread($templatefile, filesize(__DIR__ . "/res/htmltemplates/otpfield.html"));
     fclose($templatefile);
     echo $template;
 }
-
