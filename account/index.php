@@ -40,8 +40,48 @@ $accid = $SQLINK->escape_string($_SESSION["id"]);
 $result = $SQLINK->query("SELECT * FROM `users` WHERE `id` = '$accid'", MYSQLI_STORE_RESULT);
 $userdata = $result->fetch_array();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["oldpass"]) && isset($_POST["newpass"]) && isset($_POST["newpassre"])) {
+//check if request is valid
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["oldpass"]) && isset($_POST["newpass"]) && isset($_POST["newpassre"])) {
+    if (!empty($_POST["oldpass"]) && !empty($_POST["newpass"]) && !empty($_POST["newpassre"])) {
+        //check length criteria
+        if(strlen(trim($_POST["newpass"])) < 6 | strlen(trim($_POST["newpass"])) > 72){
+            $err = loginError("La password non rispetta i criteri di lunghezza.");
+        }
+        //check if confirm password is ok
+        if(trim($_POST["newpass"]) != trim($_POST["newpassre"])){
+            $err = loginError("La conferma password non corrisponde alla password inserita.");
+        }
+        //check if old password is valid
+        if(!password_verify(trim($_POST["oldpass"]), $userdata["password"])){
+            $err = loginError("La password vecchia è errata.");
+        }
+        //check if otp is needed and not provided | not valid
+        if($userdata["2fa"] == "2"){
+            if(!isset($_POST["otp"]) | empty($_POST["otp"])){
+                $err = loginError("Inserire il codice di verifica OTP.");
+            }
+            if(!$gauth->verifyCode($userdata["2fasecret"], trim($_POST["otp"]))){
+                $err = loginError("Codice di verifica non valido.");
+            }
+        }
+        //if all checks are passed proceed with pass change
+        if(empty($err)){
+            $updatequery = "UPDATE `users` SET `password` = ? WHERE `id` = ?";
+            $ud_stmt = $SQLINK->prepare($updatequery);
+            $ud_stmt->bind_param("si", $p_newpass, $p_accid);
+            //setting parameters
+            $p_newpass = password_hash(trim($_POST["newpass"]), PASSWORD_BCRYPT);
+            $p_accid = $accid;
+            //exec
+            $ud_stmt->execute();
+            //check if affected rows is one, if not err
+            if(!$ud_stmt->affected_rows == 1){
+                $err = loginError();
+            }else{
+                $err = alertOk("Cambio password eseguito con successo!");
+            }
+            $ud_stmt->close();
+        }
     } else {
         $err = loginError("Compila tutti i campi.");
     }
@@ -193,7 +233,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
                     </fiedlset>
                     <div class="form-label-group" autocomplete="off">
-                        <input type="text" name="oldpass" id="inOldPass" class="form-control" placeholder="Password Vecchia" minlength="6" maxlength="72" required autofocus autocomplete="false">
+                        <input type="password" name="oldpass" id="inOldPass" class="form-control" placeholder="Password Vecchia" minlength="6" maxlength="72" required autofocus autocomplete="false">
                         <label for="inOldPass">
                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-key-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" d="M3.5 11.5a3.5 3.5 0 1 1 3.163-5H14L15.5 8 14 9.5l-1-1-1 1-1-1-1 1-1-1-1 1H6.663a3.5 3.5 0 0 1-3.163 2zM2.5 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
@@ -202,7 +242,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </label>
                     </div>
                     <div class="form-label-group" autocomplete="off">
-                        <input type="text" name="newpass" id="inNewPass" class="form-control" placeholder="Password Nuova" minlength="6" maxlength="72" required autocomplete="false">
+                        <input type="password" name="newpass" id="inNewPass" class="form-control" placeholder="Password Nuova" minlength="6" maxlength="72" required autocomplete="false">
                         <label for="inNewPass">
                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-key" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11 9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4 4 0 0 1 0 8zm4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5z" />
@@ -221,7 +261,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </label>
                     </div>
                     <?php
-                    if ($tfa == "2") {
+                    if ($userdata["2fa"] == "2") {
                         displayOTPField();
                     }
                     echo $err;

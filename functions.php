@@ -39,6 +39,11 @@ function loginError($error = "Errore interno!")
     return "<div class='alert alert-danger' role='alert'>" . $error . "</div>";
 }
 
+function alertOk($message = "OK!")
+{
+    return "<div class='alert alert-success' role='alert'>" . $message . "</div>";
+}
+
 function setLoginTries($tries, $id)
 {
     global $SQLINK;
