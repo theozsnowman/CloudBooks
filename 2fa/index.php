@@ -68,13 +68,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>CloudBooks - 2FA</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <meta name="theme-color" content="#563d7c">
-    <link rel="shortcut icon" href="<?php echo $INSTALL_LINK;?>res/img/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="<?php echo $INSTALL_LINK;?>res/img/favicon.ico" type="image/x-icon">
+    <?php printHead("2FA") ?>
     <link href="<?php echo $INSTALL_LINK;?>res/css/login.css" rel="stylesheet">
 </head>
 

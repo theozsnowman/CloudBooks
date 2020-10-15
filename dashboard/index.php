@@ -39,135 +39,33 @@ if ($_SESSION["2fa"] == "tocheck") {
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>CloudBooks - Dashboard</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-  <link rel="shortcut icon" href="<?php echo $INSTALL_LINK;?>res/img/favicon.ico" type="image/x-icon">
-  <link rel="icon" href="<?php echo $INSTALL_LINK;?>res/img/favicon.ico" type="image/x-icon">
-  <meta name="theme-color" content="#563d7c">
-  <link href="<?php echo $INSTALL_LINK;?>res/css/basestyle.css" rel="stylesheet">
+    <?php printHead("Dashboard") ?>
+    <link href="<?php echo $INSTALL_LINK; ?>res/css/basestyle.css" rel="stylesheet">
 </head>
 
 <body>
-  <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">CloudBooks - <?php echo $CNAME;?></a>
-    <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> -->
-    <ul class="navbar-nav px-3">
-      <li class="nav-item text-nowrap">
-        <a class="nav-link" href="<?php echo $INSTALL_LINK; ?>logout.php"><span data-feather="user"></span> <?php echo $_SESSION["username"]; ?>   -   Esci <span data-feather="log-out"></span></a>
-      </li>
-    </ul>
-  </nav>
+    <?php printBar($_SESSION["username"]) ?>
+    <div class="container-fluid">
+        <div class="row">
+            <?php
+            printNavigator(SM_DASHBOARD);
+            //if admin display admin controls
+            if ($_SESSION["type"] == "1") {
+                displayAdminControls();
+            }
+            printNavigatorClose();
+            ?>
 
-  <div class="container-fluid">
-    <div class="row">
-      <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-        <div class="sidebar-sticky pt-3">
-          <ul class="nav flex-column">
-            <li class="nav-item">
-              <a class="nav-link active" href="<?php echo $INSTALL_LINK;?>dashboard">
-                <span data-feather="home"></span>
-                Dashboard <span class="sr-only">(current)</span>
-              </a>
-            </li>
-          </ul>
-
-          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-            <span>Camere</span>
-          </h6>
-          <ul class="nav flex-column mb-2">
-            <li class="nav-item">
-              <a class="nav-link" href="<?php echo $INSTALL_LINK;?>bookings/">
-                <span data-feather="calendar"></span>
-                Prenotazioni Attive
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="<?php echo $INSTALL_LINK;?>bookings/history/">
-                <span data-feather="archive"></span>
-                Storico
-              </a>
-            </li>
-          </ul>
-
-          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-            <span>Tavoli</span>
-          </h6>
-          <ul class="nav flex-column mb-2">
-            <li class="nav-item">
-              <a class="nav-link" href="<?php echo $INSTALL_LINK;?>restaurant/">
-                <span data-feather="coffee"></span>
-                Occupati Oggi
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="<?php echo $INSTALL_LINK;?>restaurant/history">
-                <span data-feather="archive"></span>
-                Storico
-              </a>
-            </li>
-          </ul>
-
-          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-            <span>Clienti</span>
-          </h6>
-          <ul class="nav flex-column mb-2">
-            <li class="nav-item">
-              <a class="nav-link" href="<?php echo $INSTALL_LINK;?>personaldata/">
-                <span data-feather="user"></span>
-                Anagrafiche Clienti
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="<?php echo $INSTALL_LINK;?>analytics/">
-                <span data-feather="trending-up"></span>
-                Analytics
-              </a>
-            </li>
-          </ul>
-
-          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-            <span>Account</span>
-          </h6>
-          <ul class="nav flex-column mb-2">
-            <li class="nav-item">
-              <a class="nav-link" href="<?php echo $INSTALL_LINK;?>account/">
-                <span data-feather="lock"></span>
-                Cambia Password
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="<?php echo $INSTALL_LINK;?>account/2fasettings/">
-                <span data-feather="layers"></span>
-                Autenticazione a due fattori
-              </a>
-            </li>
-          </ul>
-
-          <?php 
-          //if admin display admin controls
-          if($_SESSION["type"] == "1"){
-          displayAdminControls();}
-          ?>
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Dashboard</h1>
+                </div>
+            </main>
 
         </div>
-      </nav>
-
-      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-
-      </main>
-
     </div>
-  </div>
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-  <script src="https://getbootstrap.com/docs/4.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-LtrjvnR4Twt/qOuYxE721u19sVFLVSA4hf/rRt6PrZTmiPltdZcI7q7PXQBYTKyf" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
-  <script src="<?php echo $INSTALL_LINK;?>res/js/dashboard.js"></script>
+    <?php printBaseDeps() ?>
+    <script src="<?php echo $INSTALL_LINK; ?>res/js/dashboard.js"></script>
 </body>
 
 </html>

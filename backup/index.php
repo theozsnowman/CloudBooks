@@ -33,3 +33,39 @@ if ($_SESSION["2fa"] == "tocheck") {
   header("location: ".$INSTALL_LINK."2fa/");
   exit;
 }
+?>
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <?php printHead("Backup e Ripristino") ?>
+    <link href="<?php echo $INSTALL_LINK; ?>res/css/basestyle.css" rel="stylesheet">
+</head>
+
+<body>
+    <?php printBar($_SESSION["username"]) ?>
+    <div class="container-fluid">
+        <div class="row">
+            <?php
+            printNavigator();
+            //if admin display admin controls
+            if ($_SESSION["type"] == "1") {
+                displayAdminControls(AM_BACKUP);
+            }
+            printNavigatorClose();
+            ?>
+
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Backup e ripristino</h1>
+                </div>
+            </main>
+
+        </div>
+    </div>
+    <?php printBaseDeps() ?>
+    <script src="<?php echo $INSTALL_LINK; ?>res/js/dashboard.js"></script>
+</body>
+
+</html>

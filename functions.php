@@ -23,6 +23,16 @@ define("AM_USERS", "2");
 define("AM_TEST", "3");
 define("AM_LOG", "4");
 define("AM_SETTINGS", "5");
+//
+define("SM_DASHBOARD", "1");
+define("SM_BOOKINGS", "2");
+define("SM_BHISTORY", "3");
+define("SM_RESTAURANT", "4");
+define("SM_RHISTORY", "5");
+define("SM_PERSONALDATA", "6");
+define("SM_ANALYTICS", "7");
+define("SM_CHANGEPWD", "8");
+define("SM_2FA", "9");
 
 //obtain ip address
 if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
@@ -55,7 +65,7 @@ function setLoginTries($tries, $id)
     $SQLINK->query("UPDATE `users` SET `logintries` = '$tries' WHERE `id` = $id");
 }
 
-function displayAdminControls($active = "")
+function displayAdminControls($active = 0)
 {
     $a1 = "active";
     $a2 = '<span class="sr-only">(current)</span>';
@@ -64,19 +74,19 @@ function displayAdminControls($active = "")
     $template = fread($templatefile, filesize(__DIR__ . "/res/htmltemplates/admincontrols.html"));
     fclose($templatefile);
     switch ($active) {
-        case "1":
+        case 1:
             echo sprintf($template, $a1, $INSTALL_LINK, $a2,   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "");
             break;
-        case "2":
+        case 2:
             echo sprintf($template, "", $INSTALL_LINK, "",   $a1, $INSTALL_LINK, $a2,   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "");
             break;
-        case "3":
+        case 3:
             echo sprintf($template, "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   $a1, $INSTALL_LINK, $a2,   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "");
             break;
-        case "4":
+        case 4:
             echo sprintf($template, "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   $a1, $INSTALL_LINK, $a2,   "", $INSTALL_LINK, "");
             break;
-        case "5":
+        case 5:
             echo sprintf($template, "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   "", $INSTALL_LINK, "",   $a1, $INSTALL_LINK, $a2);
             break;
         default:
@@ -116,4 +126,95 @@ function displayOTPField()
     $template = fread($templatefile, filesize(__DIR__ . "/res/htmltemplates/otpfield.html"));
     fclose($templatefile);
     echo $template;
+}
+
+function printNavigatorClose(){
+    echo "</div>
+    </nav>";
+}
+
+function printNavigator($active = 0){
+    global $INSTALL_LINK;
+    $a1 = "active";
+    $a2 = '<span class="sr-only">(current)</span>';
+    $templatefile = fopen(__DIR__ . "/res/htmltemplates/navigator.html", "r");
+    $template = fread($templatefile, filesize(__DIR__ . "/res/htmltemplates/navigator.html"));
+    fclose($templatefile);
+    $parray = array(0 => "", 1 => "$INSTALL_LINK", 2 => "",    //1
+                    3 => "", 4 => "$INSTALL_LINK", 5 => "",    //2
+                    6 => "", 7 => "$INSTALL_LINK", 8 => "",    //3
+                    9 => "", 10 => "$INSTALL_LINK", 11 => "",  //4
+                    12 => "", 13 => "$INSTALL_LINK", 14 => "", //5
+                    15 => "", 16 => "$INSTALL_LINK", 17 => "", //6
+                    18 => "", 19 => "$INSTALL_LINK", 20 => "", //7
+                    21 => "", 22 => "$INSTALL_LINK", 23 => "", //8
+                    24 => "", 25 => "$INSTALL_LINK", 26 => "");//9
+    //build menu
+    switch($active){
+        case 1:
+            $parray[0] = $a1;
+            $parray[2] = $a2;
+        break;
+        case 2:
+            $parray[3] = $a1;
+            $parray[5] = $a2;
+        break;
+        case 3:
+            $parray[6] = $a1;
+            $parray[8] = $a2;
+        break;
+        case 4:
+            $parray[9] = $a1;
+            $parray[11] = $a2;
+        break;
+        case 5:
+            $parray[12] = $a1;
+            $parray[14] = $a2;
+        break;
+        case 6:
+            $parray[15] = $a1;
+            $parray[17] = $a2;
+        break;
+        case 7:
+            $parray[18] = $a1;
+            $parray[20] = $a2;
+        break;
+        case 8:
+            $parray[21] = $a1;
+            $parray[23] = $a2;
+        break;
+        case 9:
+            $parray[24] = $a1;
+            $parray[26] = $a2;
+        break;
+        default:
+            //array is fine as is
+    }
+    echo vsprintf($template, $parray);
+}
+
+function printBaseDeps()
+{
+    $templatefile = fopen(__DIR__ . "/res/htmltemplates/basedeps.html", "r");
+    $template = fread($templatefile, filesize(__DIR__ . "/res/htmltemplates/basedeps.html"));
+    fclose($templatefile);
+    echo $template;
+}
+
+function printHead($title)
+{
+    global $INSTALL_LINK;
+    $templatefile = fopen(__DIR__ . "/res/htmltemplates/head.html", "r");
+    $template = fread($templatefile, filesize(__DIR__ . "/res/htmltemplates/head.html"));
+    fclose($templatefile);
+    echo sprintf($template, $title, $INSTALL_LINK, $INSTALL_LINK);
+}
+
+function printBar($username){
+    global $INSTALL_LINK;
+    global $CNAME;
+    $templatefile = fopen(__DIR__ . "/res/htmltemplates/topbar.html", "r");
+    $template = fread($templatefile, filesize(__DIR__ . "/res/htmltemplates/topbar.html"));
+    fclose($templatefile);
+    echo sprintf($template, $CNAME, $INSTALL_LINK, $username);
 }
