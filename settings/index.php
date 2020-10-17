@@ -33,6 +33,12 @@ if ($_SESSION["2fa"] == "tocheck") {
   header("location: ".$INSTALL_LINK."2fa/");
   exit;
 }
+
+if ($_SESSION["type"] != "1"){
+    //if user not admin kick out
+    header("location: " . $INSTALL_LINK . "logout.php");
+    exit;
+}
 ?>
 
 <!doctype html>

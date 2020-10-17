@@ -34,6 +34,12 @@ if ($_SESSION["2fa"] == "tocheck") {
     exit;
 }
 
+if ($_SESSION["type"] != "1"){
+    //if user not admin kick out
+    header("location: " . $INSTALL_LINK . "logout.php");
+    exit;
+}
+
 //get table data
 $result = $SQLINK->query("SELECT * FROM `logs`");
 ?>
