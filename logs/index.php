@@ -34,7 +34,7 @@ if ($_SESSION["2fa"] == "tocheck") {
     exit;
 }
 
-if ($_SESSION["type"] != "1"){
+if ($_SESSION["type"] != "1") {
     //if user not admin kick out
     header("location: " . $INSTALL_LINK . "logout.php");
     exit;
@@ -67,6 +67,9 @@ $result = $SQLINK->query("SELECT * FROM `logs`");
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Ispezione Log</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearTable('<?php echo $INSTALL_LINK.'/logs/cleartbl.php'; ?>');">RIPULISCI TABELLA</button>
+                    </div>
                 </div>
 
                 <div class="table-responsive">
@@ -81,7 +84,7 @@ $result = $SQLINK->query("SELECT * FROM `logs`");
                         </thead>
                         <tbody>
                             <?php
-                            while($row = $result->fetch_array()){
+                            while ($row = $result->fetch_array()) {
                                 printTableRow($row["timestamp"], $row["ipaddr"], $row["calledfrom"], $row["action"]);
                             }
                             ?>

@@ -1,3 +1,4 @@
+<?php
 /*  
     CloudBooks. Open source hotel and restaurant management software.
     Copyright (C) 2020 Vittorio Lo Mele
@@ -16,39 +17,29 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     Contact me at: vittorio[at]mrbackslash.it
 */
-
-/* globals Chart:false, feather:false */
-
-$(document).ready(function () {
-  feather.replace(); //replaces icons
-  $('#logtbl').DataTable({
-    "order": [[0, "desc"]],
-    "language": {
-      "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Italian.json"
-    }
-  });
-});
-
-function clearTable(backendurl) {
-  if (confirm("Sei sicuro di RIPULIRE tutta la tabella dei log? Quest'azione è irreversibile!")) {
-    $.ajax({
-      type: "GET",
-      url: backendurl,
-      cache: false,
-      dataType: 'json',
-      xhrFields: {
-        withCredentials: true
-      },
-      success: function (res) {
-        if (res.status != "true") {
-          alert("Impossibile ripulire la tabella!");
-        } else {
-          location.reload();
-        }
-      },
-      error: function() {
-        alert("Impossibile ripulire la tabella!");
-      }
-  })
+if (!file_exists("../config.php")) {
+    die("Please run installer in /installer directory");
 }
+session_start();
+require_once "../config.php";
+require_once "../functions.php";
+
+if (!isset($_SESSION["loggedin"]) | $_SESSION["loggedin"] != true) {
+    printStatusJson("false");
+}
+
+if ($_SESSION["2fa"] == "tocheck") {
+    printStatusJson("false");
+}
+
+if ($_SESSION["type"] != "1"){
+    printStatusJson("false");
+}
+
+$result = $SQLINK->query("TRUNCATE `logs`");
+insertLog($ip, "login-inspector", "TABLE CLEARED BY USER ". $_SESSION["username"]);
+if($result != false){
+    printStatusJson("true");
+}else{
+    printStatusJson("false");
 }

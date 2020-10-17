@@ -226,3 +226,10 @@ function printTableRow(...$params){
     }
     echo "</tr>";
 }
+
+function printStatusJson($res){
+    $template = '{
+        "status": "%s"
+    }';
+    echo sprintf($template, $res);
+}
