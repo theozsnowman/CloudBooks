@@ -74,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $_SESSION["type"] = $res_acctype;
                             //reset tries + log
                             setLoginTries(0, $res_id);
-                            insertLog($ip, "login", "PASSWORD ACCEPTED FOR USER " . $res_user);
+                            insertLog($ip, "login", "ACCEPTED FOR USER " . $res_user);
                             //check if 2fa is enabled
                             if ($res_2fa == "2") {
                                 $_SESSION["2fa"] = "tocheck";

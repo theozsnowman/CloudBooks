@@ -18,21 +18,24 @@
     Contact me at: vittorio[at]mrbackslash.it
 */
 if (!file_exists("../config.php")) {
-  die("Please run installer in /installer directory");
+    die("Please run installer in /installer directory");
 }
 session_start();
 require_once "../config.php";
 require_once "../functions.php";
 
 if (!isset($_SESSION["loggedin"]) | $_SESSION["loggedin"] != true) {
-  header("location: ".$INSTALL_LINK);
-  exit;
+    header("location: " . $INSTALL_LINK);
+    exit;
 }
 
 if ($_SESSION["2fa"] == "tocheck") {
-  header("location: ".$INSTALL_LINK."2fa/");
-  exit;
+    header("location: " . $INSTALL_LINK . "2fa/");
+    exit;
 }
+
+//get table data
+$result = $SQLINK->query("SELECT * FROM `logs`");
 ?>
 <!doctype html>
 <html lang="en">
@@ -59,12 +62,32 @@ if ($_SESSION["2fa"] == "tocheck") {
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Ispezione Log</h1>
                 </div>
+
+                <div class="table-responsive">
+                    <table id="logtbl" class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>Data ed Ora</th>
+                                <th>Indirizzo IP</th>
+                                <th>Sorgente</th>
+                                <th>Descrizione</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            while($row = $result->fetch_array()){
+                                printTableRow($row["timestamp"], $row["ipaddr"], $row["calledfrom"], $row["action"]);
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
             </main>
 
         </div>
     </div>
     <?php printBaseDeps() ?>
-    <script src="<?php echo $INSTALL_LINK; ?>res/js/dashboard.js"></script>
+    <script src="<?php echo $INSTALL_LINK; ?>res/js/inspectlogs.js"></script>
 </body>
 
 </html>

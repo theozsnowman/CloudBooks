@@ -140,15 +140,15 @@ function printNavigator($active = 0){
     $templatefile = fopen(__DIR__ . "/res/htmltemplates/navigator.html", "r");
     $template = fread($templatefile, filesize(__DIR__ . "/res/htmltemplates/navigator.html"));
     fclose($templatefile);
-    $parray = array(0 => "", 1 => "$INSTALL_LINK", 2 => "",    //1
-                    3 => "", 4 => "$INSTALL_LINK", 5 => "",    //2
-                    6 => "", 7 => "$INSTALL_LINK", 8 => "",    //3
-                    9 => "", 10 => "$INSTALL_LINK", 11 => "",  //4
-                    12 => "", 13 => "$INSTALL_LINK", 14 => "", //5
-                    15 => "", 16 => "$INSTALL_LINK", 17 => "", //6
-                    18 => "", 19 => "$INSTALL_LINK", 20 => "", //7
-                    21 => "", 22 => "$INSTALL_LINK", 23 => "", //8
-                    24 => "", 25 => "$INSTALL_LINK", 26 => "");//9
+    $parray = array(0 => "", 1 => "$INSTALL_LINK", 2 => "",      //1
+                    3 => "", 4 => "$INSTALL_LINK", 5 => "",      //2
+                    6 => "", 7 => "$INSTALL_LINK", 8 => "",      //3
+                    9 => "", 10 => "$INSTALL_LINK", 11 => "",    //4
+                    12 => "", 13 => "$INSTALL_LINK", 14 => "",   //5
+                    15 => "", 16 => "$INSTALL_LINK", 17 => "",   //6
+                    18 => "", 19 => "$INSTALL_LINK", 20 => "",   //7
+                    21 => "", 22 => "$INSTALL_LINK", 23 => "",   //8
+                    24 => "", 25 => "$INSTALL_LINK", 26 => "");  //9
     //build menu
     switch($active){
         case 1:
@@ -217,4 +217,12 @@ function printBar($username){
     $template = fread($templatefile, filesize(__DIR__ . "/res/htmltemplates/topbar.html"));
     fclose($templatefile);
     echo sprintf($template, $CNAME, $INSTALL_LINK, $username);
+}
+
+function printTableRow(...$params){
+    echo "<tr>";
+    foreach ($params as $s){
+        echo "<td>".$s."</td>";
+    }
+    echo "</tr>";
 }
