@@ -99,7 +99,7 @@ function displayEnable2faForm($src, $err = "none")
     $templatefile = fopen(__DIR__ . "/res/htmltemplates/2faenable.html", "r");
     $template = fread($templatefile, filesize(__DIR__ . "/res/htmltemplates/2faenable.html"));
     fclose($templatefile);
-    if ($err = "none") {
+    if ($err == "none") {
         $err_ok = "";
     } else {
         $err_ok = "<div class='alert alert-danger' role='alert'>" . $err . "</div>";
@@ -112,7 +112,7 @@ function displayDisable2faForm($err = "none")
     $templatefile = fopen(__DIR__ . "/res/htmltemplates/2fadisable.html", "r");
     $template = fread($templatefile, filesize(__DIR__ . "/res/htmltemplates/2fadisable.html"));
     fclose($templatefile);
-    if ($err = "none") {
+    if ($err == "none") {
         $err_ok = "";
     } else {
         $err_ok = "<div class='alert alert-danger' role='alert'>" . $err . "</div>";

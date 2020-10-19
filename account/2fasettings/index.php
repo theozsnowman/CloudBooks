@@ -32,7 +32,7 @@ if (!isset($_SESSION["loggedin"]) | $_SESSION["loggedin"] != true) {
 if ($_SESSION["2fa"] == "tocheck") {
     header("location: " . $INSTALL_LINK . "2fa/");
 }
-$err = "";
+$err = "none";
 //get 2fa status from DB
 $gauth = new PHPGangsta_GoogleAuthenticator;
 $accid = $SQLINK->escape_string($_SESSION["id"]);
@@ -141,17 +141,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["mode"]) && isset($_POS
     </div>
     <?php printBaseDeps() ?>
     <script src="<?php echo $INSTALL_LINK; ?>res/js/dashboard.js"></script>
-    <script>
-        //'show err' script
-        var error = "<?php echo $err ?>";
-        document.addEventListener('DOMContentLoaded', (event) => {
-            if (error != "") {
-                setTimeout(() => {
-                    alert(error);
-                }, 50);
-            }
-        });
-    </script>
 </body>
 
 </html>
