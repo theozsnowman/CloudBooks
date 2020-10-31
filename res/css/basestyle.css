@@ -158,3 +158,13 @@ body::-moz-scrollbar-thumb {
   border-color: transparent;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
 }
+
+.s_boldred{
+  font-weight: bold;
+  color: red;
+}
+
+.s_boldgreen{
+  font-weight: bold;
+  color: green;
+}

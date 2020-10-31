@@ -81,6 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 header("location: ".$INSTALL_LINK."2fa/");
                             } else {
                                 $_SESSION["2fa"] = "notneeded";
+                                updateLastLogin($res_id);
                                 header("location: ".$INSTALL_LINK."dashboard/");
                             }
                         } else {

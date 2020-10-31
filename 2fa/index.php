@@ -47,6 +47,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $_SESSION["2fa"] = "ok";
             insertLog($ip, "2fa", "ACCEPTED FOR USER $sessuser");
             setLoginTries(0, $accid);
+            updateLastLogin($_SESSION["id"]);
             header("location: ".$INSTALL_LINK."dashboard");
             exit;
         }else{

@@ -39,6 +39,8 @@ if ($_SESSION["type"] != "1"){
     header("location: " . $INSTALL_LINK . "logout.php");
     exit;
 }
+
+$result = $SQLINK->query("SELECT `id`, `username`, `2fa`, `acctype`, `logintries`, `lastlogin` FROM `users`");
 ?>
 
 <!doctype html>
@@ -65,7 +67,54 @@ if ($_SESSION["type"] != "1"){
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Gestione Utenti</h1>
+                    <a href="?getpdf=1" class="btn btn-sm btn-outline-primary">AGGIUNGI UTENTE</a>
                 </div>
+                    <div class="table-responsive">
+                        <table id="usertbl" class="table table-striped table-sm">
+                            <thead>
+                            <tr>
+                                <th>ID Utente</th>
+                                <th>Nome Utente</th>
+                                <th>Stato 2FA</th>
+                                <th>Tipo Account</th>
+                                <th>Stato Account</th>
+                                <th>Ultimo Accesso</th>
+                                <th>Modifica Utente</th>
+                                <th>Elimina Utente</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php
+                            while ($row = $result->fetch_array()){
+                                if($row["2fa"] == "2"){
+                                    $tfastate = "<div class='s_boldgreen'>ATTIVA</div>";
+                                }else{
+                                    $tfastate = "<div class='s_boldred'>NON ATTIVA</div>";
+                                }
+                                if($row["acctype"] == "1"){
+                                    $acctype = "AMMINISTRATORE";
+                                }else{
+                                    $acctype = "STANDARD";
+                                }
+                                if($row["logintries"] <= 5){
+                                    $accstate = "<div class='s_boldgreen'>ATTIVO</div>";
+                                }else{
+                                    $accstate = "<div class='s_boldred'>BLOCCATO</div>";
+                                }
+                                if($row["id"] != "1"){
+                                    $modbtn = "<a href='#' onclick=\"window.open('usermod.php', '_blank', 'location=yes,height=550,width=467,scrollbars=no,status=no,resizable=no');\">" . PencilSVGCode(1) . " MODIFICA</a>";
+                                    $delbtn = "<a href='userdel.php?id=" . $row["id"] . "'>". XcSVGCode(1) ." ELIMINA</a>";
+                                }else{
+                                    $modbtn = "<div class='s_boldred'>NO </div>";
+                                    $delbtn = "<div class='s_boldred'>NO</div>";
+                                }
+
+                                printTableRow($row["id"], $row["username"], $tfastate, $acctype, $accstate, $row["lastlogin"], $modbtn, $delbtn);
+                            }
+                            ?>
+                            </tbody>
+                        </table>
+                    </div>
             </main>
 
         </div>
