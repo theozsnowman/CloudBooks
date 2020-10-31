@@ -17,12 +17,15 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     Contact me at: vittorio[at]mrbackslash.it
 */
+
 if (!file_exists("../config.php")) {
     die("Please run installer in /installer directory");
 }
 session_start();
 require_once "../config.php";
 require_once "../functions.php";
+require "../res/libs/dompdf/autoload.inc.php";
+use Dompdf\Dompdf;
 
 if (!isset($_SESSION["loggedin"]) | $_SESSION["loggedin"] != true) {
     header("location: " . $INSTALL_LINK);
@@ -42,6 +45,45 @@ if ($_SESSION["type"] != "1") {
 
 //get table data
 $result = $SQLINK->query("SELECT * FROM `logs`");
+
+if(isset($_GET["getpdf"]) && $_GET["getpdf"] == "1"){
+    $dompdf = new DOMPDF();
+    $DOM = "
+        <html>
+            <head>
+                <style>
+                    table, th, td {
+                      border: 1px solid black;
+                      border-collapse: collapse;
+                    }
+                </style>
+            </head>
+            <body>
+                <h3>LOG ESPORTATI IL " . date("d/m/Y") . "</h3>
+                <table style=''>
+                    <thead>
+                        <tr>
+                            <th>Data ed Ora</th>
+                            <th>Indirizzo IP</th>
+                            <th>Sorgente</th>
+                            <th>Descrizione</th>
+                        </tr>
+                    </thead>
+                    <tbody>";
+        while ($row = $result->fetch_array()) {
+            $DOM = $DOM. retTableRow($row["timestamp"], $row["ipaddr"], $row["calledfrom"], $row["action"]);
+        }
+        $DOM = $DOM. "</tbody>
+                    </table>
+                </body>
+            </html>";
+        $dompdf->loadHtml($DOM);
+        $dompdf->render();
+        ob_end_clean();
+        $dompdf->stream("logs". date("dmY"). ".pdf");
+        header("location: ./");
+        die;
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -69,6 +111,8 @@ $result = $SQLINK->query("SELECT * FROM `logs`");
                     <h1 class="h2">Ispezione Log</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearTable('<?php echo $INSTALL_LINK.'/logs/cleartbl.php'; ?>');">RIPULISCI TABELLA</button>
+                        <a style="color: #FFF"> - </a> <!-- spacer -->
+                        <a href="?getpdf=1" class="btn btn-sm btn-outline-primary">SCARICA PDF</a>
                     </div>
                 </div>
 

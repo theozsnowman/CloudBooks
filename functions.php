@@ -227,6 +227,16 @@ function printTableRow(...$params){
     echo "</tr>";
 }
 
+function retTableRow(...$params){
+    $fin = "";
+    $fin = $fin. "<tr>";
+    foreach ($params as $s){
+        $fin = $fin. "<td>".$s."</td>";
+    }
+    $fin = $fin. "</tr>";
+    return $fin;
+}
+
 function printStatusJson($res){
     $template = '{
         "status": "%s"
