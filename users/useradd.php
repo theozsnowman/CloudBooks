@@ -1,4 +1,5 @@
 <?php
+<?php
 /*  
     CloudBooks. Open source hotel and restaurant management software.
     Copyright (C) 2020 Vittorio Lo Mele
@@ -14,3 +15,25 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     Contact me at: vittorio[at]mrbackslash.it
 */
+if (!file_exists("../config.php")) {
+  die("Please run installer in /installer directory");
+}
+session_start();
+require_once "../config.php";
+require_once "../functions.php";
+
+if (!isset($_SESSION["loggedin"]) | $_SESSION["loggedin"] != true) {
+  header("location: ".$INSTALL_LINK);
+  exit;
+}
+
+if ($_SESSION["2fa"] == "tocheck") {
+  header("location: ".$INSTALL_LINK."2fa/");
+  exit;
+}
+
+if ($_SESSION["type"] != "1"){
+    //if user not admin kick out
+    header("location: " . $INSTALL_LINK . "logout.php");
+    exit;
+}
