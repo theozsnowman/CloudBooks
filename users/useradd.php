@@ -1,5 +1,4 @@
 <?php
-<?php
 /*  
     CloudBooks. Open source hotel and restaurant management software.
     Copyright (C) 2020 Vittorio Lo Mele
@@ -37,3 +36,16 @@ if ($_SESSION["type"] != "1"){
     header("location: " . $INSTALL_LINK . "logout.php");
     exit;
 }
+?>
+<!doctype html>
+<html lang="en">
+<head>
+    <?php printHead("Aggiunta nuovo utente") ?>
+    <link href="<?php echo $INSTALL_LINK; ?>res/css/basestyle.css" rel="stylesheet">
+</head>
+<body>
+<?php printTopBarDiag("Aggiunta nuovo utente") ?>
+
+<?php printBaseDeps() ?>
+</body>
+</html>

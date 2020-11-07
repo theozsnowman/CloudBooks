@@ -1,5 +1,4 @@
 <?php
-<?php
 /*  
     CloudBooks. Open source hotel and restaurant management software.
     Copyright (C) 2020 Vittorio Lo Mele

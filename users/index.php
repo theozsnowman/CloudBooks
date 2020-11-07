@@ -67,7 +67,7 @@ $result = $SQLINK->query("SELECT `id`, `username`, `2fa`, `acctype`, `logintries
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Gestione Utenti</h1>
-                    <a href="?getpdf=1" class="btn btn-sm btn-outline-primary">AGGIUNGI UTENTE</a>
+                    <a onclick="window.open('useradd.php', '_blank', 'location=yes,height=550,width=467,scrollbars=no,status=no,resizable=no');" class="btn btn-sm btn-outline-primary">AGGIUNGI UTENTE</a>
                 </div>
                     <div class="table-responsive">
                         <table id="usertbl" class="table table-striped table-sm">
