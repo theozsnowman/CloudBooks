@@ -103,7 +103,7 @@ $result = $SQLINK->query("SELECT `id`, `username`, `2fa`, `acctype`, `logintries
                                 }
                                 if($row["id"] != "1"){
                                     $modbtn = "<a href='#' onclick=\"window.open('usermod.php', '_blank', 'location=yes,height=550,width=467,scrollbars=no,status=no,resizable=no');\">" . PencilSVGCode(1) . " MODIFICA</a>";
-                                    $delbtn = "<a href='userdel.php?id=" . $row["id"] . "'>". XcSVGCode(1) ." ELIMINA</a>";
+                                    $delbtn = "<a href='../api/v1/userdel.php?id=" . $row["id"] . "&r=1'>". XcSVGCode(1) ." ELIMINA</a>";
                                 }else{
                                     $modbtn = "<div class='s_boldred'>NO </div>";
                                     $delbtn = "<div class='s_boldred'>NO</div>";
