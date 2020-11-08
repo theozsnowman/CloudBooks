@@ -76,7 +76,7 @@ switch($_SERVER["REQUEST_METHOD"]){
 }
 
 $id = $SQLINK->real_escape_string($id);
-if(is_int($id)){
+if(is_numeric($id) & $id != "1"){
     $q = $SQLINK->query("DELETE * FROM `users` WHERE `id` = $id");
     if(mysqli_num_rows($q) != 1){
         die("Invalid user id");
