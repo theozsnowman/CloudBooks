@@ -67,7 +67,7 @@ $result = $SQLINK->query("SELECT `id`, `username`, `2fa`, `acctype`, `logintries
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Gestione Utenti</h1>
-                    <a onclick="window.open('useradd.php', '_blank', 'location=yes,height=550,width=467,scrollbars=no,status=no,resizable=no');" class="btn btn-sm btn-outline-primary">AGGIUNGI UTENTE</a>
+                    <a onclick="window.open('useradd.php', '_blank', 'location=yes,height=550,width=433,scrollbars=no,status=no,resizable=no');" class="btn btn-sm btn-outline-primary">AGGIUNGI UTENTE</a>
                 </div>
                     <div class="table-responsive">
                         <table id="usertbl" class="table table-striped table-sm">
@@ -103,7 +103,7 @@ $result = $SQLINK->query("SELECT `id`, `username`, `2fa`, `acctype`, `logintries
                                 }
                                 if($row["id"] != "1"){
                                     $modbtn = "<a href='#' onclick=\"window.open('usermod.php', '_blank', 'location=yes,height=550,width=467,scrollbars=no,status=no,resizable=no');\">" . PencilSVGCode(1) . " MODIFICA</a>";
-                                    $delbtn = "<a href='../api/v1/userdel.php?id=" . $row["id"] . "&r=1'>". XcSVGCode(1) ." ELIMINA</a>";
+                                    $delbtn = "<a href='" . $INSTALL_LINK . "api/v1/userdel.php?id=" . $row["id"] . "&r=1'>". XcSVGCode(1) ." ELIMINA</a>";
                                 }else{
                                     $modbtn = "<div class='s_boldred'>NO </div>";
                                     $delbtn = "<div class='s_boldred'>NO</div>";
